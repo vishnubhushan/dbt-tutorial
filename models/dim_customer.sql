@@ -1,0 +1,28 @@
+{{
+    config(
+        materialized='table'
+    )
+}}
+
+
+WITH CUSTOMERS AS
+(SELECT * FROM {{ref('stg_customers')}}
+),
+ORDERS AS
+(
+  SELECT * FROM {{ref('stg_orders')}}
+),
+CUSTOMER_ORDERS AS
+(
+SELECT 
+  CUSTOMERS.FIRST_NAME,
+  CUSTOMERS.LAST_NAME,
+  ORDERS.MIN_ORDER_DATE,
+  ORDERS.MAX_ORDER_DATE,
+  ORDERS.TOTAL_ORDERS
+  FROM
+  ORDERS
+ JOIN CUSTOMERS
+  ON CUSTOMERS.ID = ORDERS.USER_ID
+)
+SELECT * FROM CUSTOMER_ORDERS
